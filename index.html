@@ -53,6 +53,17 @@
       margin-bottom: 20px;
       border: 1px solid #666;
     }
+    input {
+      padding: 5px;
+    }
+    button {
+      padding: 5px;
+    }
+    .check {
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+    }
   </style>
 </head>
 
@@ -96,7 +107,11 @@
       function operator(acc, cur, idx) {
         return acc + `
           <details class="details">
-            <summary class="summary"><span style="font-size: 14px; color: #ccc;">${idx + 1}</span> ${cur.definition}</summary>
+            <summary class="summary">
+              <span style="font-size: 14px; color: #ccc;">${idx + 1}</span> 
+              <span>${cur.definition}</span>
+              <div data-idx="${idx}" class="check"><input placeholder="猜猜什么词" /><button>check</button></div>
+            </summary>
             <details class="child-details">
               <summary>${cur.name}</summary>
               <div class="contentNode">${cur.pinyin} </div>
@@ -125,6 +140,29 @@
         render(az(data))
       });
 
+
+    document.querySelector('#list')
+      .addEventListener('click', (e) => {
+        const target = e.target || e.srcElement;
+        if (target.nodeName !== 'BUTTON') return;
+        const parentNode = target.parentNode;
+        const input = parentNode.querySelector('input');
+          if (
+            input 
+            && input.value.trim() 
+            && input.value.trim() !== data[parentNode.dataset.idx].name
+          ) {
+            alert('打错了')
+          }
+      });
+
+    document.querySelector('#list')
+      .addEventListener('keydown', (e) => {
+        const target = e.target || e.srcElement;
+        // 空格键
+        if (target.nodeName !== 'INPUT') return;
+        if (e.keyCode === 32) e.preventDefault();
+      });
 
   </script>
 </body>
