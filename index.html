@@ -147,13 +147,12 @@
         if (target.nodeName !== 'BUTTON') return;
         const parentNode = target.parentNode;
         const input = parentNode.querySelector('input');
-          if (
-            input 
-            && input.value.trim() 
-            && input.value.trim() !== data[parentNode.dataset.idx].name
-          ) {
-            alert('打错了')
-          }
+        const condition = input 
+          && input.value.trim()  
+          && input.value.trim() !== data[parentNode.dataset.idx].name;
+        
+        alert(condition ? '回答错误' : '🙆');
+      
       });
 
     document.querySelector('#list')
