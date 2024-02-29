@@ -79,17 +79,21 @@
     }
 
     function az(data) {
-      const az = 'abcdefghijklmnopqrstuvwxyz'.split('');
-      const azData = az.reduce((acc, cur) => {
+      function operator(acc, cur) {
         acc[cur] = data.filter(el => el.sugPy === cur) || [];
         return acc;
-      }, {});
-      return Object.values(azData).flat()
+      }
+      return Object.values(
+        'abcdefghijklmnopqrstuvwxyz'
+          .split('')
+          .reduce(operator, {})
+      ).flat()
     }
 
 
     const getHtml = data => {
-      return data.reduce((acc, cur, idx) => {
+
+      function operator(acc, cur, idx) {
         return acc + `
           <details class="details">
             <summary class="summary"><span style="font-size: 14px; color: #ccc;">${idx + 1}</span> ${cur.definition}</summary>
@@ -99,12 +103,13 @@
             </details>
           </details>
         `;
-      }, '')
+      }
+
+      return data.reduce(operator, '');
     }
 
     function render(data) {
-      const listHtml = getHtml(data);
-      document.querySelector('#list').innerHTML = listHtml;
+      document.querySelector('#list').innerHTML = getHtml(data);
     }
 
     render(data);
