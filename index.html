@@ -76,6 +76,32 @@
 
   <script>
 
+    const localStorageKey = 'answerWrongCounts';
+
+    const colors = [
+        '#efefef',
+        "#fff1f0",
+        "#ffccc7",
+        "#ffa39e",
+        "#ff7875",
+        "#ff4d4f",
+        "#f5222d",
+        "#cf1322",
+        "#a8071a",
+        "#820014",
+        "#5c0011"
+    ];
+
+    function clear() {
+      if (/clear\=1/.test(window.location.search)) {
+        localStorage.removeItem(localStorageKey)
+      }
+    }
+
+    const answerWrongCounts = localStorage.getItem(localStorageKey)
+      ? JSON.parse(localStorage.getItem(localStorageKey))
+      : {};
+
     function shuffle(arr) {
       var l = arr.length
       var index, temp
@@ -102,11 +128,20 @@
     }
 
 
-    const getHtml = data => {
+    function getColor(sid) {
+      if (answerWrongCounts[sid] === 0 || typeof answerWrongCounts[sid] === 'undefined') return colors[0]
 
+      if (answerWrongCounts[sid] >= colors.length) return colors[colors.length - 1];
+
+      return colors[answerWrongCounts[sid]];
+    }
+
+
+    const getHtml = data => {
       function operator(acc, cur, idx) {
+        const backColor = getColor(cur.sid);
         return acc + `
-          <details class="details">
+          <details id="J_${cur.sid}" style="background: ${backColor}" class="details">
             <summary class="summary">
               <span style="font-size: 14px; color: #ccc;">${idx + 1}</span> 
               <span>${cur.definition}</span>
@@ -127,6 +162,8 @@
       document.querySelector('#list').innerHTML = getHtml(data);
     }
 
+    clear();
+
     render(data);
 
 
@@ -145,13 +182,25 @@
       .addEventListener('click', (e) => {
         const target = e.target || e.srcElement;
         if (target.nodeName !== 'BUTTON') return;
-        const parentNode = target.parentNode;
-        const input = parentNode.querySelector('input');
-        const condition = input 
-          && input.value.trim()  
-          && input.value.trim() !== data[parentNode.dataset.idx].name;
+        const parentNode = target.parentNode,
+              input = parentNode.querySelector('input'),
+              idx = parentNode.dataset.idx,
+              eleId = data[idx].sid,
+              isWrong = input 
+                && input.value.trim()  
+                && input.value.trim() !== data[idx].name;
+
+        if (typeof answerWrongCounts[eleId] === 'undefined') answerWrongCounts[eleId] = 0;
+     
+        answerWrongCounts[eleId] = !isWrong
+          ? 0
+          : answerWrongCounts[eleId] + 1;
+
         
-        alert(condition ? '回答错误' : '🙆');
+        localStorage.setItem(localStorageKey, JSON.stringify(answerWrongCounts))
+        document.querySelector(`#J_${eleId}`).style.background = getColor(eleId);
+
+        alert(isWrong ? '回答错误' : '🙆');
       
       });
 
