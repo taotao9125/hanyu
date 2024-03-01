@@ -182,13 +182,16 @@
       .addEventListener('click', (e) => {
         const target = e.target || e.srcElement;
         if (target.nodeName !== 'BUTTON') return;
+        
         const parentNode = target.parentNode,
               input = parentNode.querySelector('input'),
               idx = parentNode.dataset.idx,
               eleId = data[idx].sid,
-              isWrong = input 
-                && input.value.trim()  
-                && input.value.trim() !== data[idx].name;
+              inputValue = input.value.trim();
+              
+        if (!inputValue) return;
+
+        const isWrong = inputValue && inputValue !== data[idx].name;
 
         if (typeof answerWrongCounts[eleId] === 'undefined') answerWrongCounts[eleId] = 0;
      
@@ -200,16 +203,18 @@
         localStorage.setItem(localStorageKey, JSON.stringify(answerWrongCounts))
         document.querySelector(`#J_${eleId}`).style.background = getColor(eleId);
 
-        alert(isWrong ? '回答错误' : '🙆');
+     
+        alert(isWrong ? '😭回答错误' : '😊回答正确');
       
       });
 
     document.querySelector('#list')
       .addEventListener('keydown', (e) => {
         const target = e.target || e.srcElement;
-        // 空格键
+        
         if (target.nodeName !== 'INPUT') return;
-        if (e.keyCode === 32) e.preventDefault();
+        // 空格键 和 中文输入状态
+        if ([32, 229].includes(e.keyCode )) e.preventDefault();
       });
 
   </script>
