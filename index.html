@@ -41,7 +41,8 @@
     }
 
     #shuffle,
-    #az {
+    #az,
+    #random {
       width: 60px;
       height: 60px;
       border: 1px solid #ccc;
@@ -72,6 +73,7 @@
   <div class="sort">
     <div id="shuffle">shuffle</div>
     <div id="az">A-Z</div>
+    <div id="random">random</div>
   </div>
 
   <script>
@@ -134,6 +136,11 @@
       if (answerWrongCounts[sid] >= colors.length) return colors[colors.length - 1];
 
       return colors[answerWrongCounts[sid]];
+    }
+
+    function getRandom (n, m) {
+        var num = Math.floor(Math.random() * (m - n + 1) + n)
+        return num
     }
 
 
@@ -216,6 +223,12 @@
         // 空格键 和 中文输入状态
         if ([32, 229].includes(e.keyCode )) e.preventDefault();
       });
+
+
+    document.querySelector('#random')
+      .addEventListener('click', (e) => {
+        render([data[getRandom(0, data.length)]])
+      })
 
   </script>
 </body>
