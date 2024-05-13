@@ -218,12 +218,13 @@
         if ([32, 229].includes(e.keyCode )) e.preventDefault();
       });
 
+    document.addEventListener('keydown', (e) => {
+      if (e.keyCode === 39) render([data[getRandom(0, data.length)]]);
+    })
+
 
     document.querySelector('#random')
       .addEventListener('click', (e) => {
-        // console.log(
-        //   data[getRandom(0, data.length)]
-        // )
         render([data[getRandom(0, data.length)]])
       })
 
